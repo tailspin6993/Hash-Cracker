@@ -11,5 +11,5 @@ Example:
 # Optional Arguments
 - -a/--algorithm : specify algorithm to use
 
-Example"
+Example:
 `python cracker.py a377c08cdd4affd787165bb4b8238efcf1ac1225 wordlists/default.txt -a sha1`
