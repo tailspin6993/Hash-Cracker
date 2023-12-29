@@ -19,7 +19,7 @@ ALGORITHMS = {
     'sha256': hashlib.sha256,
     'sha512': hashlib.sha512
 }
-DEFAULT_ALGORITHM = ALGORITHMS['sha256']
+DEFAULT_ALGORITHM = 'sha256'
 
 def read_from_wordlist(wordlist_path):
     with open(wordlist_path, 'r') as f:
@@ -40,15 +40,17 @@ def hash_data(alg, entry):
 
 def main():
     if args.algorithm is None:
-        alg_to_use = DEFAULT_ALGORITHM
+        alg_name = DEFAULT_ALGORITHM
     elif args.algorithm.lower() in ALGORITHMS:
-        alg_to_use = ALGORITHMS[args.algorithm.lower()]
+        alg_name = args.algorithm.lower()
     else:
         print(f'Unsupported algorithm. Supported algorithms: {", ".join(ALGORITHMS)}')
         return
 
-    if not verify_hash_format(alg_to_use, args.digest):
-        print(f"{args.digest} is not a valid {args.algorithm} digest.")
+    alg = ALGORITHMS[alg_name]
+
+    if not verify_hash_format(alg, args.digest):
+        print(f"{args.digest} is not a valid {alg_name} digest.")
         return
 
     if not path.exists(args.wordlist):
@@ -59,7 +61,7 @@ def main():
 
     start = perf_counter()
     for entry in wordlist:
-        newly_computed_hash = hash_data(alg_to_use, entry)
+        newly_computed_hash = hash_data(alg, entry)
         if compare_digest(newly_computed_hash, args.digest):
             print(f'Password found: {entry.decode()}')
             print(f"Took {perf_counter()-start:.2f}s")
