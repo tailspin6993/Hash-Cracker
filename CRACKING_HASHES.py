@@ -42,7 +42,9 @@ def main():
         newly_computed_hash = hash_data(alg_to_use, entry)
         if compare_digest(newly_computed_hash, args.digest):
             print(f'Password found: {entry.decode()}')
-            break
+            return
+
+    print('Password not found :(')
 
 if __name__ == "__main__":
     main()
