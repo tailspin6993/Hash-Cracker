@@ -1,7 +1,0 @@
-confirm_hash.py (testing if your password is in the list)
-
-passwords.txt (26K common passwords)
-
-CRACKING_HASHES.py (crack the hashes)
-
-made by Blxsted
