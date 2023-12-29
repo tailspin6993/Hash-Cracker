@@ -1,7 +1,9 @@
 import hashlib
-import argparse
-from os import path
 from hmac import compare_digest
+
+import argparse
+import re
+from os import path
 
 parser = argparse.ArgumentParser()
 parser.add_argument('digest', help='digest to attempt to crack')
@@ -23,6 +25,15 @@ def read_from_wordlist(wordlist_path):
         for line in f:
             yield line.strip().encode()
 
+def verify_hash_format(alg, supplied_hash):
+    sample_hash = alg(b'test').hexdigest()
+    pattern = re.compile(r"^[a-f0-9]{" + f"{len(sample_hash)}" + r'}$')
+
+    if not re.match(pattern, supplied_hash):
+        return False
+    
+    return True
+
 def hash_data(alg, entry):
     return alg(entry).hexdigest()
 
@@ -33,6 +44,10 @@ def main():
         alg_to_use = ALGORITHMS[args.algorithm.lower()]
     else:
         print(f'Unsupported algorithm. Supported algorithms: {", ".join(ALGORITHMS)}')
+        return
+
+    if not verify_hash_format(alg_to_use, args.digest):
+        print(f"{args.digest} is not a valid {args.algorithm} digest.")
         return
 
     if not path.exists(args.wordlist):
