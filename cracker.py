@@ -4,6 +4,7 @@ from hmac import compare_digest
 import argparse
 import re
 from os import path
+from time import perf_counter
 
 parser = argparse.ArgumentParser()
 parser.add_argument('digest', help='digest to attempt to crack')
@@ -56,10 +57,12 @@ def main():
 
     wordlist = read_from_wordlist(args.wordlist)
 
+    start = perf_counter()
     for entry in wordlist:
         newly_computed_hash = hash_data(alg_to_use, entry)
         if compare_digest(newly_computed_hash, args.digest):
             print(f'Password found: {entry.decode()}')
+            print(f"Took {perf_counter()-start:.2f}s")
             return
 
     print('Password not found :(')
