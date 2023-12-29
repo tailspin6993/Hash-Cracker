@@ -33,6 +33,7 @@ def main():
         alg_to_use = ALGORITHMS[args.algorithm.lower()]
     else:
         print(f'Unsupported algorithm. Supported algorithms: {", ".join(ALGORITHMS)}')
+        return
 
     if not path.exists(args.wordlist):
         print(f'Wordlist {args.wordlist} cannot be found or is unreachable.')
