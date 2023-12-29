@@ -1,8 +1,10 @@
 import hashlib
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('digest', help='digest to attempt to crack')
+parser.add_argument('wordlist', help='wordlist to use')
 parser.add_argument('-a', '--algorithm', help='algorithm to use, default is SHA256')
 parser.add_argument('-s', '--salt', help='salt to use (if any)')
 
@@ -14,17 +16,24 @@ ALGORITHMS = {
     'sha256': hashlib.sha256,
     'sha512': hashlib.sha512
 }
+DEFAULT_ALGORITHM = ALGORITHMS['sha256']
 
-def hash_file(file_path):
-    with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
-        for line in file:
-            plaintext = line.strip()
-            hashed = hashlib.sha256(plaintext.encode()).hexdigest()
-            if hashed == hash_to_match:
-                print(f"CRACKED THE PASSWORD!\nPlaintext: {plaintext}\nHash: {hashed}")
-                return
+def read_from_wordlist(wordlist_path):
+    with open(wordlist_path, 'r') as f:
+        for line in f:
+            yield line
+
+def main():
+    if args.algorithm is None:
+        alg_to_use = DEFAULT_ALGORITHM
+    elif args.algorithm.lower() in ALGORITHMS:
+        alg_to_use = ALGORITHMS[args.algorithm.lower()]
+
+    if not os.path.exists(args.wordlist):
+        print(f'Wordlist {args.wordlist} cannot be found or is unreachable.')
+        return
+
+    wordlist = read_from_wordlist(args.wordlist)
 
 if __name__ == "__main__":
-    hash_to_match = input("Enter a hash to attempt to crack: ")
-    file_path = "passwords.txt"  # Replace with the path to your text file
-    hash_file(file_path)
+    main()
